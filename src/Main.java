@@ -24,6 +24,7 @@ public class Main {
 //        System.out.println(book.getNameByPhone("456"));
 //        book.deleteOnlyPhone("123");
         System.out.println(book);
+        System.out.println(book.showAll());
 
     }
 }

@@ -78,15 +78,33 @@ public class TelephoneBook {
     }
 
     /**
+     * Метод для форматированного вывода всего справочника
+     * @return Строка с информацией из справочника
+     */
+    public String showAll() {
+        return show(new ArrayList<>(map.keySet()));
+    }
+
+
+    /**
      * Метод для вывода данных справочника в виде таблицы
      * @param names Список имен абонентов для вывода данных
      * @return Отформатированная строка
      */
-    public String show(List<String> names) {
+    private String show(List<String> names) {
         String nameTitle = "Абонент";
         String phoneTitle = "Номер";
-        int nameFieldLength = 20;
-        int phoneFieldLength = 20;
+        // Определяем ширину столбцов таблицы
+        int nameFieldLength = nameTitle.length();
+        int phoneFieldLength = phoneTitle.length();
+        for (Map.Entry item: map.entrySet()) {
+            String name = (String) item.getKey();
+            List<String> list = (List<String>) item.getValue();
+            nameFieldLength = nameFieldLength < name.length() ? name.length() : nameFieldLength;
+            for (String i : list) {
+                phoneFieldLength = phoneFieldLength < i.length() ? i.length() : phoneFieldLength;
+            }
+        }
         // Формируем заголовок
         String nameLine =  "─".repeat(nameFieldLength);
         String phoneLine =  "─".repeat(phoneFieldLength);
@@ -95,11 +113,13 @@ public class TelephoneBook {
         stringBuilder.append(getTableLine(nameTitle,phoneTitle,nameFieldLength,phoneFieldLength));
         stringBuilder.append("├").append(nameLine).append("┼").append(phoneLine).append("┤\n");
         // Формируем область данных
-        Map<List<String>, String> tree = getTreeMap();
+        Map<List<String>, String> tree = getTreeMap(names);
         for (Map.Entry item: tree.entrySet()) {
             String name = (String) item.getValue();
             List<String> list = (List<String>) item.getKey();
+            // Выводим строку с именем и первым телефоном в списке
             stringBuilder.append(getTableLine(name,list.get(0),nameFieldLength,phoneFieldLength));
+            // Если у этого абонента более одного телефона, выводим их, но уже без имени
             for (int i = 1; i < list.size(); i++) {
                 stringBuilder.append(getTableLine("",list.get(i),nameFieldLength,phoneFieldLength));
             }

@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.List;
-import java.util.HashMap;
+import java.util.*;
 
 public class TelephoneBook {
     private Map<String, List<String>> map = new HashMap<>();
@@ -73,12 +70,76 @@ public class TelephoneBook {
     }
 
     /**
-     * Метод для вывода всего справочника в виде строки
+     * Метод для упрощенного вывода всего справочника
      * @return Строка с информацией из справочника
      */
     public String toString() {
-        return map.toString();
+        return getTreeMap(new ArrayList<>(map.keySet())).toString();
     }
 
+    /**
+     * Метод для вывода данных справочника в виде таблицы
+     * @param names Список имен абонентов для вывода данных
+     * @return Отформатированная строка
+     */
+    public String show(List<String> names) {
+        String nameTitle = "Абонент";
+        String phoneTitle = "Номер";
+        int nameFieldLength = 20;
+        int phoneFieldLength = 20;
+        // Формируем заголовок
+        String nameLine =  "─".repeat(nameFieldLength);
+        String phoneLine =  "─".repeat(phoneFieldLength);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("┌").append(nameLine).append("┬").append(phoneLine).append("┐\n");
+        stringBuilder.append(getTableLine(nameTitle,phoneTitle,nameFieldLength,phoneFieldLength));
+        stringBuilder.append("├").append(nameLine).append("┼").append(phoneLine).append("┤\n");
+        // Формируем область данных
+        Map<List<String>, String> tree = getTreeMap();
+        for (Map.Entry item: tree.entrySet()) {
+            String name = (String) item.getValue();
+            List<String> list = (List<String>) item.getKey();
+            stringBuilder.append(getTableLine(name,list.get(0),nameFieldLength,phoneFieldLength));
+            for (int i = 1; i < list.size(); i++) {
+                stringBuilder.append(getTableLine("",list.get(i),nameFieldLength,phoneFieldLength));
+            }
+        }
+        // Формируем завершающую строку
+        stringBuilder.append("└").append(nameLine).append("┴").append(phoneLine).append("┘\n");
+        return stringBuilder.toString();
+    }
 
+    /**
+     * Вспомогательный метод, формирующий одну строку таблицы
+     * @param first Содержимое первого столбца
+     * @param second Содержимое второго столбца
+     * @param firstFieldLength Ширина первого столбца
+     * @param secondFieldLength Ширина второго столбца
+     * @return Отформатированная строка
+     */
+    private String getTableLine(String first, String second, int firstFieldLength, int secondFieldLength) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("│");
+        stringBuilder.append(first);
+        stringBuilder.append(" ".repeat(firstFieldLength - first.length()));
+        stringBuilder.append("│");
+        stringBuilder.append(second);
+        stringBuilder.append(" ".repeat(secondFieldLength - second.length()));
+        stringBuilder.append("│\n");
+        return stringBuilder.toString();
+    }
+
+    /**
+     * Вспомогательный метод, формирующий TreeMap для заданного списка имен абонентов
+     * @param names Список имен абонентов для вывода данных
+     * @return справочник в виде TreeMap
+     */
+    private TreeMap getTreeMap(List<String> names) {
+        TelephoneBookComparator comparator = new TelephoneBookComparator();
+        TreeMap<List<String>, String> tree = new TreeMap<>(comparator);
+        for (String name : names) {
+            tree.put(map.get(name), name);
+        }
+        return tree;
+    }
 }

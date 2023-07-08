@@ -15,12 +15,14 @@ public class Main {
         book.add("Иванов Андрей", "456");
         book.add("Иванов Иван", "789");
         book.add("Сидорова Анна", "321");
-        System.out.println(book);
-        book.deleteByName("Сидорова Анна");
-        System.out.println(book);
-        System.out.println(book.getPhoneByName("Иванов Иван"));
-        System.out.println(book.getNameByPhone("456"));
-        book.deleteOnlyPhone("123");
+        book.add("Сидорова Анна", "213");
+        book.add("Сидорова Анна", "89578");
+//        System.out.println(book);
+//        book.deleteByName("Сидорова Анна");
+//        System.out.println(book);
+//        System.out.println(book.getPhoneByName("Иванов Иван"));
+//        System.out.println(book.getNameByPhone("456"));
+//        book.deleteOnlyPhone("123");
         System.out.println(book);
 
     }
